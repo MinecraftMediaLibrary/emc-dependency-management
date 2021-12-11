@@ -57,9 +57,8 @@ publishing {
         }
     }
     publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
+        val publication = create<MavenPublication>("shadow")
+        project.shadow.component(publication)
     }
 }
 
