@@ -23,6 +23,6 @@ Bukkit Plugins. Example code can be seen here:
 2) Add the dependency:
 ```kotlin
     dependencies {
-        implementation("io.github.pulsebeat02", "emc-dependency-management", "1.0.0")
+        implementation("io.github.pulsebeat02", "emc-dependency-management", "v1.0.1")
     }
 ```
