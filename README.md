@@ -10,3 +10,19 @@ Bukkit Plugins. Example code can be seen here:
         .createEMCDepManagement();
     management.load();
 ```
+
+## Setup
+
+1) Add the repository:
+```kotlin
+    repositories {
+        maven("https://pulsebeat02.jfrog.io/artifactory/pulse-gradle-release-local");
+    }
+```
+
+2) Add the dependency:
+```kotlin
+    dependencies {
+        implementation("io.github.pulsebeat02", "emc-dependency-management", "1.0.0")
+    }
+```
