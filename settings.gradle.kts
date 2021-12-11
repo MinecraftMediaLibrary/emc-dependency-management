@@ -1,0 +1,1 @@
+rootProject.name = "emc-dependency-management"
