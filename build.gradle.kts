@@ -38,6 +38,8 @@ tasks {
         dependsOn(build)
     }
     shadowJar {
+        archiveBaseName.set("emc-dependency-management-all")
+        archiveClassifier.set("")
         relocate("me.lucko", "io.github.pulsebeat02.emcdependencymanagement.lib.lucko")
         relocate("org.objectweb", "io.github.pulsebeat02.emcdependencymanagement.lib.objectweb")
     }
@@ -45,6 +47,7 @@ tasks {
         dependsOn(shadowJar)
     }
 }
+
 
 publishing {
     repositories {
@@ -57,8 +60,9 @@ publishing {
         }
     }
     publications {
-        val publication = create<MavenPublication>("shadow")
-        project.shadow.component(publication)
+        create<MavenPublication>("maven") {
+            artifact(tasks["shadowJar"])
+        }
     }
 }
 
