@@ -23,7 +23,7 @@
  */
 package io.github.pulsebeat02.emcdependencymanagement.component;
 
-import static io.github.pulsebeat02.emcdependencymanagement.util.Packages.correctPackage;
+import static io.github.pulsebeat02.emcdependencymanagement.util.PackageUtils.correctPackage;
 
 public final class Relocation {
 

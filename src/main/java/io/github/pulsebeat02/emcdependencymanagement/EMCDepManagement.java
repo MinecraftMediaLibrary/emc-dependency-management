@@ -39,16 +39,19 @@ import java.util.stream.Stream;
 
 public final class EMCDepManagement {
 
+  private final SimpleLogger logger;
   private final Collection<Artifact> artifacts;
   private final Collection<Relocation> relocations;
   private final Collection<Repository> repositories;
   private final Path folder;
 
   EMCDepManagement(
+      final SimpleLogger logger,
       final Collection<Artifact> artifacts,
       final Collection<Relocation> relocations,
       final Collection<Repository> repositories,
       final Path folder) {
+    this.logger = logger;
     this.artifacts = artifacts == null ? new ArrayList<>() : artifacts;
     this.relocations = relocations == null ? new ArrayList<>() : relocations;
     this.repositories = repositories == null ? new ArrayList<>() : repositories;
@@ -82,7 +85,7 @@ public final class EMCDepManagement {
 
   private Collection<Path> installedJars(final Collection<Artifact> download) throws IOException {
     final JarInstaller installer =
-        JarInstaller.ofInstaller(download, this.repositories, this.folder);
+        JarInstaller.ofInstaller(this.logger, download, this.repositories, this.folder);
     return installer.install();
   }
 
@@ -97,8 +100,29 @@ public final class EMCDepManagement {
     }
   }
 
+  public SimpleLogger getLogger() {
+    return this.logger;
+  }
+
+  public Collection<Artifact> getArtifacts() {
+    return this.artifacts;
+  }
+
+  public Collection<Relocation> getRelocations() {
+    return this.relocations;
+  }
+
+  public Collection<Repository> getRepositories() {
+    return this.repositories;
+  }
+
+  public Path getFolder() {
+    return this.folder;
+  }
+
   public static class Builder {
 
+    private SimpleLogger logger;
     private Collection<Artifact> artifacts;
     private Collection<Relocation> relocations;
     private Collection<Repository> repositories;
@@ -106,6 +130,23 @@ public final class EMCDepManagement {
     private String name;
 
     {
+      this.logger =
+          new SimpleLogger() {
+            @Override
+            public void info(final String line) {
+              System.out.printf("[INFO] %s%n", line);
+            }
+
+            @Override
+            public void warning(final String line) {
+              System.out.printf("[WARN] %s%n", line);
+            }
+
+            @Override
+            public void error(final String line) {
+              System.err.printf("[ERROR] %s%n", line);
+            }
+          };
       this.artifacts = new ArrayList<>();
       this.relocations = new ArrayList<>();
       this.repositories = new ArrayList<>();
@@ -151,10 +192,16 @@ public final class EMCDepManagement {
       return this;
     }
 
-    public EMCDepManagement createEMCDepManagement() throws IOException {
+    public Builder setLogger(final SimpleLogger logger) {
+      this.logger = logger;
+      return this;
+    }
+
+    public EMCDepManagement create() throws IOException {
       final Path file = (this.folder == null ? this.getFolder() : this.folder).resolve(this.name);
       this.createFile(file);
       return new EMCDepManagement(
+          this.logger,
           new ArrayList<>(this.artifacts),
           new ArrayList<>(this.relocations),
           new ArrayList<>(this.repositories),

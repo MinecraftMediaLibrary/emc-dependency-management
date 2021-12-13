@@ -16,6 +16,7 @@ public final class EMCDepTest {
 
   public static void main(final String[] args) throws ReflectiveOperationException, IOException {
     setClassLoader();
+
     final Set<Repository> repos =
         Stream.of(
                 "https://papermc.io/repo/repository/maven-public/",
@@ -35,34 +36,36 @@ public final class EMCDepTest {
         Stream.of(
                 ofArtifact("uk:co:caprica", "vlcj", "4:7:1"),
                 ofArtifact("uk:co:caprica", "vlcj-natives", "4:5:0"),
-                ofArtifact("com:github:sealedtx", "java-youtube-downloader", "3:0:1"), //
+                ofArtifact("com:github:sealedtx", "java-youtube-downloader", "3:0:2"), //
                 ofArtifact("com:alibaba", "fastjson", "1:2:78"),
-                ofArtifact("net:java:dev:jna", "jna", "5:9:0"),
-                ofArtifact("net:java:dev:jna", "jna-platform", "5:9:0"),
-                ofArtifact("se:michaelthelin:spotify", "spotify-web-api-java", "6:5:4"),
-                ofArtifact("com:github:kokorin:jaffree", "jaffree", "2021:08:31"),
+                ofArtifact("net:java:dev:jna", "jna", "5:10:0"),
+                ofArtifact("net:java:dev:jna", "jna-platform", "5:10:0"),
+                ofArtifact("se:michaelthelin:spotify", "spotify-web-api-java", "7:0:0"),
+                ofArtifact("com:github:kokorin:jaffree", "jaffree", "2021:11:06"),
                 ofArtifact("org:jcodec", "jcodec", "0:2:5"),
-                ofArtifact("com:github:ben-manes:caffeine", "caffeine", "3:0:3"),
-                ofArtifact("io:github:pulsebeat02", "jarchivelib", "v1:4:0"),
+                ofArtifact("com:github:ben-manes:caffeine", "caffeine", "3:0:5"),
                 ofArtifact("io:github:pulsebeat02", "emc-installers", "v1:0:1"),
-                ofArtifact("it:unimi:dsi", "fastutil", "8:5:6"))
+                ofArtifact("it:unimi:dsi", "fastutil", "8:5:6"),
+                ofArtifact("com:fasterxml:jackson:core", "jackson-core", "2:13:0"),
+                ofArtifact("org:apache:httpcomponents:client5", "httpclient5", "5.2-alpha1"),
+                ofArtifact("com:neovisionaries", "nv-i18n", "1:29"))
             .collect(Collectors.toSet());
 
+    final String base = "io:github:pulsebeat02:ezmediacore:lib:%s";
     final Set<Relocation> relocations =
         Stream.of(
-                ofRelocation("uk:co:caprica:vlcj", "io:github:pulsebeat02:ezmediacore:lib:vlcj"),
-                ofRelocation(
-                    "com:github:kiulian:downloader",
-                    "io:github:pulsebeat02:ezmediacore:lib:youtube"),
-                ofRelocation(
-                    "com:wrapper:spotify", "io:github:pulsebeat02:ezmediacore:lib:spotify"),
-                ofRelocation("com:github:kokorin", "io:github:pulsebeat02:ezmediacore:lib:kokorin"),
-                ofRelocation("org:jcodec", "io:github:pulsebeat02:ezmediacore:lib:jcodec"),
-                ofRelocation(
-                    "com:github:benmanes:caffeine",
-                    "io:github:pulsebeat02:ezmediacore:lib:caffeine"),
-                ofRelocation(
-                    "it:unimi:dsi:fastutil", "io:github:pulsebeat02:ezmediacore:lib:fastutil"))
+                ofRelocation("uk:co:caprica", String.format(base, "caprica")),
+                ofRelocation("com:github:kiulian", String.format(base, "kiulian")),
+                ofRelocation("se.michaelthelin", String.format(base, "michaelthelin")),
+                ofRelocation("com:github:kokorin", String.format(base, "kokorin")),
+                ofRelocation("org:jcodec", String.format(base, "jcodec")),
+                ofRelocation("com:github:benmanes", String.format(base, "caffeine")),
+                ofRelocation("it:unimi:dsi", String.format(base, "dsi")),
+                ofRelocation("com:alibaba", String.format(base, "alibaba")),
+                ofRelocation("net:sourceforge:jaad:aac", String.format(base, "sourceforge")),
+                ofRelocation("com:fasterxml", String.format(base, "fasterxml")),
+                ofRelocation("org:apache", String.format(base, "apache")),
+                ofRelocation("com:neovisionaries", String.format(base, "neovisionaries")))
             .collect(Collectors.toSet());
 
     final EMCDepManagement management =
@@ -72,7 +75,7 @@ public final class EMCDepTest {
             .setRepos(repos)
             .setArtifacts(artifacts)
             .setRelocations(relocations)
-            .createEMCDepManagement();
+            .create();
     management.load();
   }
 

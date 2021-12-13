@@ -7,7 +7,7 @@ Bukkit Plugins. Example code can be seen here:
         .setApplicationName("MyPlugin")
         .addArtifact(ofArtifact("me:lucko", "jar-relocator", "1.5"))
         .addRelocation(ofRelocation("me:lucko", "io:github:pulsebeat02:lucko"))
-        .createEMCDepManagement();
+        .create();
     management.load();
 ```
 
@@ -16,13 +16,13 @@ Bukkit Plugins. Example code can be seen here:
 1) Add the repository:
 ```kotlin
     repositories {
-        maven("https://pulsebeat02.jfrog.io/artifactory/pulse-gradle-release-local");
+        maven("https://pulsebeat02.jfrog.io/artifactory/pulse-gradle-release-local/");
     }
 ```
 
 2) Add the dependency:
 ```kotlin
     dependencies {
-        implementation("io.github.pulsebeat02", "emc-dependency-management", "v1.0.1")
+        implementation("io.github.pulsebeat02", "emc-dependency-management", "v1.0.0")
     }
 ```

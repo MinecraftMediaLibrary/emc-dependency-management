@@ -1,30 +1,29 @@
 /**
  * MIT License
  *
- * Copyright (c) 2021 Brandon Li
+ * <p>Copyright (c) 2021 Brandon Li
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * <p>The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package io.github.pulsebeat02.emcdependencymanagement.component.downloader;
 
+import io.github.pulsebeat02.emcdependencymanagement.SimpleLogger;
 import io.github.pulsebeat02.emcdependencymanagement.component.Artifact;
 import io.github.pulsebeat02.emcdependencymanagement.component.Repository;
+import io.github.pulsebeat02.emcdependencymanagement.util.FileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -35,20 +34,25 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
 
 public final class JarInstaller {
 
+  private final SimpleLogger logger;
   private final Collection<Artifact> artifacts;
   private final Collection<Repository> repositories;
   private final Set<Path> paths;
   private final Path target;
 
   JarInstaller(
+      final SimpleLogger logger,
       final Collection<Artifact> artifacts,
       final Collection<Repository> repositories,
       final Path target) {
+    this.logger = logger;
     this.artifacts = artifacts;
     this.repositories = repositories;
     this.target = target;
@@ -58,10 +62,11 @@ public final class JarInstaller {
   }
 
   public static JarInstaller ofInstaller(
+      final SimpleLogger logger,
       final Collection<Artifact> artifacts,
       final Collection<Repository> repositories,
       final Path target) {
-    return new JarInstaller(artifacts, repositories, target);
+    return new JarInstaller(logger, artifacts, repositories, target);
   }
 
   public Collection<Path> install() throws IOException {
@@ -87,18 +92,46 @@ public final class JarInstaller {
     try {
       this.downloadJar(url);
     } catch (final IOException e) {
-      e.printStackTrace();
+      this.logger.error(String.format("Failed to download JAR located at url %s!", url));
     }
   }
 
   private void downloadJar(final String url) throws IOException {
+
+    final Path jarPath = this.downloadFile(url);
+    if (this.checkHash(jarPath, url)) {
+      this.downloadJar(url);
+    }
+
+    this.paths.add(jarPath);
+  }
+
+  private boolean checkHash(final Path jarPath, final String url) throws IOException {
+
+    final String originalHash = this.getCheckSumArtifact(url);
+    final String newHash = FileUtils.getUppercaseHash(jarPath);
+    if (originalHash.isEmpty()) {
+      this.logger.warning(
+          String.format("Could not retrieve SHA1 hash for artifact %s! Skipping hash check!", url));
+      return false;
+    }
+
+    if (!originalHash.equals(newHash)) {
+      Files.deleteIfExists(jarPath);
+      return true;
+    }
+
+    return false;
+  }
+
+  private Path downloadFile(final String url) throws IOException {
     final URL website = new URL(url);
     final String jar = this.getFilename(url);
     final Path jarPath = this.target.resolve(jar);
     try (final InputStream in = website.openStream()) {
       Files.copy(in, jarPath, StandardCopyOption.REPLACE_EXISTING);
     }
-    this.paths.add(jarPath);
+    return jarPath;
   }
 
   private String getFilename(final String url) {
@@ -117,9 +150,7 @@ public final class JarInstaller {
   }
 
   private boolean isValidUrl(final String url) throws IOException {
-    final HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-    con.setRequestMethod("HEAD");
-    return con.getResponseCode() == HttpURLConnection.HTTP_OK;
+    return this.createConnection(url).getResponseCode() == HttpURLConnection.HTTP_OK;
   }
 
   private String getAppendedUrl(final Artifact artifact) {
@@ -128,6 +159,20 @@ public final class JarInstaller {
     final String version = artifact.getVersion();
     final String jar = String.format("%s-%s.jar", artifactId, version);
     return String.format("%s/%s/%s/%s", groupId, artifactId, version, jar);
+  }
+
+  private String getCheckSumArtifact(final String url) throws IOException {
+    final String hashUrl = String.format("%s.sha1", url);
+    try (final Scanner scanner =
+        new Scanner(new URL(hashUrl).openStream(), "UTF-8").useDelimiter("\\A")) {
+      return scanner.next().toUpperCase(Locale.ROOT);
+    }
+  }
+
+  private HttpURLConnection createConnection(final String url) throws IOException {
+    final HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+    con.setRequestMethod("HEAD");
+    return con;
   }
 
   public Collection<Artifact> getArtifacts() {

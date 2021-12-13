@@ -23,9 +23,9 @@
  */
 package io.github.pulsebeat02.emcdependencymanagement.util;
 
-public final class Packages {
+public final class PackageUtils {
 
-  private Packages() {}
+  private PackageUtils() {}
 
   public static String correctPackage(final String name) {
     return name.replace(':', '.');
