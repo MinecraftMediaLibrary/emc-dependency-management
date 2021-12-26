@@ -23,7 +23,7 @@
  */
 package io.github.pulsebeat02.emcdependencymanagement.injector;
 
-import static io.github.pulsebeat02.emcdependencymanagement.unsafe.UnsafeUtils.getField;
+import static io.github.pulsebeat02.emcdependencymanagement.util.UnsafeUtils.getField;
 
 import io.github.pulsebeat02.emcdependencymanagement.unsafe.UnsafeManager;
 import java.net.MalformedURLException;

@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
+/** Installs the JARs based on the artifacts given. */
 public final class JarInstaller {
 
   private final SimpleLogger logger;
@@ -61,6 +62,15 @@ public final class JarInstaller {
         Arrays.asList(Repository.MAVEN_CENTRAL, Repository.OSS_SONATYPE, Repository.JCENTER));
   }
 
+  /**
+   * Creates a new artifact installer.
+   *
+   * @param logger the logger to use
+   * @param artifacts the artifacts to install
+   * @param repositories the repositories to search
+   * @param target the target directory
+   * @return a new JarInstaller
+   */
   public static JarInstaller ofInstaller(
       final SimpleLogger logger,
       final Collection<Artifact> artifacts,
@@ -69,6 +79,12 @@ public final class JarInstaller {
     return new JarInstaller(logger, artifacts, repositories, target);
   }
 
+  /**
+   * Starts the installation process.
+   *
+   * @return Collection of all the artifact paths
+   * @throws IOException if an issue occured during installation
+   */
   public Collection<Path> install() throws IOException {
     this.createFolder();
     this.artifacts.parallelStream().forEach(this::installArtifact);

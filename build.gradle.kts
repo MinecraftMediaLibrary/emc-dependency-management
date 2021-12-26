@@ -76,4 +76,8 @@ subprojects {
         mapping("java", "SLASHSTAR_STYLE")
         includes(listOf("**/*.java", "**/*.kts"))
     }
+
+    task<Wrapper>("wrapper") {
+        gradleVersion = "7.3"
+    }
 }

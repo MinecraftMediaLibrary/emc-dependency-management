@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+/** Searches for JARs which need to be loaded based on the file name. */
 public final class JarSearcher {
 
   private final Collection<Artifact> artifacts;
@@ -39,10 +40,24 @@ public final class JarSearcher {
     this.folder = folder;
   }
 
+  /**
+   * Creates a new JAR searcher.
+   *
+   * @param artifacts the artifacts needed to be loaded
+   * @param folder the search path
+   * @return a new JAR searcher
+   */
   public static JarSearcher ofSearcher(final Collection<Artifact> artifacts, final Path folder) {
     return new JarSearcher(artifacts, folder);
   }
 
+  /**
+   * Starts the searching process.
+   *
+   * @return a Collection of artifacts containing what needs to be installed
+   *
+   * @throws IOException if an issue occurred while detection
+   */
   public Collection<Artifact> getNeededInstallation() throws IOException {
     final List<Artifact> needed = new ArrayList<>();
     for (final Artifact artifact : this.artifacts) {

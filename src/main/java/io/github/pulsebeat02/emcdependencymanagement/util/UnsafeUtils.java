@@ -20,11 +20,35 @@
  */
 package io.github.pulsebeat02.emcdependencymanagement.util;
 
-public final class PackageUtils {
+import io.github.pulsebeat02.emcdependencymanagement.unsafe.UnsafeManager;
+import java.lang.reflect.Field;
+import sun.misc.Unsafe;
 
-  private PackageUtils() {}
+public final class UnsafeUtils {
 
-  public static String correctPackage(final String name) {
-    return name.replace(':', '.');
+  private UnsafeUtils() {}
+
+  private static final Unsafe UNSAFE;
+
+  static {
+    UNSAFE = UnsafeManager.getUnsafe();
+  }
+
+  public static void setFinalField(final Field field, final Object obj, final Object value) {
+    UNSAFE.putObject(obj, UNSAFE.objectFieldOffset(field), value);
+  }
+
+  public static void setStaticFinalField(final Field field, final Object value) {
+    UNSAFE.putObject(UNSAFE.staticFieldBase(field), UNSAFE.staticFieldOffset(field), value);
+  }
+
+  public static Object getField(final Object object, final String name)
+      throws NoSuchFieldException {
+    return getField(object.getClass(), object, name);
+  }
+
+  public static Object getField(final Class<?> clazz, final Object object, final String name)
+      throws NoSuchFieldException {
+    return UNSAFE.getObject(object, UNSAFE.objectFieldOffset(clazz.getDeclaredField(name)));
   }
 }

@@ -1,25 +1,22 @@
 /**
  * MIT License
  *
- * Copyright (c) 2021 Brandon Li
+ * <p>Copyright (c) 2021 Brandon Li
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * <p>The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package io.github.pulsebeat02.emcdependencymanagement.component.relocator;
 
@@ -32,12 +29,13 @@ import java.util.stream.Stream;
 import me.lucko.jarrelocator.JarRelocator;
 import me.lucko.jarrelocator.Relocation;
 
-public final class FolderRelocator {
+/** Relocates all JARs for files. */
+public final class FileRelocator {
 
   private final Collection<Relocation> relocations;
   private final Collection<Path> files;
 
-  private FolderRelocator(
+  FileRelocator(
       final Collection<io.github.pulsebeat02.emcdependencymanagement.component.Relocation>
           relocations,
       final Collection<Path> files) {
@@ -45,11 +43,18 @@ public final class FolderRelocator {
     this.files = files;
   }
 
-  public static FolderRelocator ofRelocator(
+  /**
+   * Creates a new folder locator.
+   *
+   * @param relocations the relocations to apply
+   * @param files the files to relocate
+   * @return a new FileRelocator
+   */
+  public static FileRelocator ofRelocator(
       final Collection<io.github.pulsebeat02.emcdependencymanagement.component.Relocation>
           relocations,
       final Collection<Path> files) {
-    return new FolderRelocator(relocations, files);
+    return new FileRelocator(relocations, files);
   }
 
   public void relocate() throws IOException {

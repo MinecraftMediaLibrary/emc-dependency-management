@@ -24,7 +24,7 @@ import io.github.pulsebeat02.emcdependencymanagement.component.Artifact;
 import io.github.pulsebeat02.emcdependencymanagement.component.Relocation;
 import io.github.pulsebeat02.emcdependencymanagement.component.Repository;
 import io.github.pulsebeat02.emcdependencymanagement.component.downloader.JarInstaller;
-import io.github.pulsebeat02.emcdependencymanagement.component.relocator.FolderRelocator;
+import io.github.pulsebeat02.emcdependencymanagement.component.relocator.FileRelocator;
 import io.github.pulsebeat02.emcdependencymanagement.component.search.JarSearcher;
 import io.github.pulsebeat02.emcdependencymanagement.injector.UnsafeInjection;
 import java.io.IOException;
@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/** Main class for handling JAR dependencies. */
 public final class EMCDepManagement {
 
   private final SimpleLogger logger;
@@ -58,10 +59,21 @@ public final class EMCDepManagement {
     this.folder = folder;
   }
 
+  /**
+   * Creates a new builder.
+   *
+   * @return a new builder
+   */
   public static Builder builder() {
     return new Builder();
   }
 
+  /**
+   * Loads the JARs into the classpath.
+   *
+   * @throws IOException if an issue occurred during installation
+   * @throws ReflectiveOperationException if an issue occurred during loading
+   */
   public void load() throws IOException, ReflectiveOperationException {
 
     final Collection<Artifact> download = this.needsDownload();
@@ -79,7 +91,7 @@ public final class EMCDepManagement {
   }
 
   private void relocate(final Collection<Path> paths) throws IOException {
-    final FolderRelocator relocator = FolderRelocator.ofRelocator(this.relocations, paths);
+    final FileRelocator relocator = FileRelocator.ofRelocator(this.relocations, paths);
     relocator.relocate();
   }
 
@@ -152,51 +164,111 @@ public final class EMCDepManagement {
       this.repositories = new ArrayList<>();
     }
 
+    /**
+     * Sets the application name.
+     *
+     * @param name the name
+     * @return the same builder
+     */
     public Builder setApplicationName(final String name) {
       this.name = name;
       return this;
     }
 
+    /**
+     * Sets the artifacts to install.
+     *
+     * @param artifacts the artifacts
+     * @return the same builder
+     */
     public Builder setArtifacts(final Collection<Artifact> artifacts) {
       this.artifacts = artifacts;
       return this;
     }
 
+    /**
+     * Adds an artifact to install.
+     *
+     * @param artifact the artifact
+     * @return the same builder
+     */
     public Builder addArtifact(final Artifact artifact) {
       this.artifacts.add(artifact);
       return this;
     }
 
+    /**
+     * Sets the relocations to apply.
+     *
+     * @param relocations the relocations
+     * @return the same builder
+     */
     public Builder setRelocations(final Collection<Relocation> relocations) {
       this.relocations = relocations;
       return this;
     }
 
+    /**
+     * Adds a relocation to apply.
+     *
+     * @param relocation the relocation
+     * @return the same builder
+     */
     public Builder addRelocation(final Relocation relocation) {
       this.relocations.add(relocation);
       return this;
     }
 
+    /**
+     * Sets the repositories to search from.
+     *
+     * @param repositories the repositories
+     * @return the same builder
+     */
     public Builder setRepos(final Collection<Repository> repositories) {
       this.repositories = repositories;
       return this;
     }
 
+    /**
+     * Adds a repository to search from.
+     *
+     * @param repository the repository
+     * @return the same builder
+     */
     public Builder addRepo(final Repository repository) {
       this.repositories.add(repository);
       return this;
     }
 
+    /**
+     * Sets the target directory.
+     *
+     * @param folder the folder
+     * @return the same builder
+     */
     public Builder setFolder(final Path folder) {
       this.folder = folder;
       return this;
     }
 
+    /**
+     * Sets the logger to log messages.
+     *
+     * @param logger the logger
+     * @return the same builder
+     */
     public Builder setLogger(final SimpleLogger logger) {
       this.logger = logger;
       return this;
     }
 
+    /**
+     * Creates a new EMCDepManagement.
+     *
+     * @return a new EMCDepManagement
+     * @throws IOException if an issue occured during folder creation
+     */
     public EMCDepManagement create() throws IOException {
       final Path file = (this.folder == null ? this.getFolder() : this.folder).resolve(this.name);
       this.createFile(file);
