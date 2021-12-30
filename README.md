@@ -15,14 +15,14 @@ Bukkit Plugins. Example code can be seen here:
 
 1) Add the repository:
 ```kotlin
-    repositories {
-        maven("https://pulsebeat02.jfrog.io/artifactory/pulse-gradle-release-local/");
-    }
+repositories { 
+    maven("https://pulsebeat02.jfrog.io/artifactory/minecraftmedialibrary/");
+}
 ```
 
 2) Add the dependency:
 ```kotlin
-    dependencies {
-        implementation("io.github.pulsebeat02", "emc-dependency-management", "v1.0.0")
-    }
+dependencies {
+    implementation("io.github.pulsebeat02:emc-dependency-management:v1.0.0")
+}
 ```

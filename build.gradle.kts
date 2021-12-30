@@ -52,7 +52,7 @@ tasks {
 publishing {
     repositories {
         maven {
-            setUrl("https://pulsebeat02.jfrog.io/artifactory/pulse-gradle-release-local")
+            setUrl("https://pulsebeat02.jfrog.io/artifactory/minecraftmedialibrary/")
             credentials {
                 username = ""
                 password = ""
