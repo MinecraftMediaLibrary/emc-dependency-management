@@ -27,6 +27,8 @@ import io.github.pulsebeat02.emcdependencymanagement.component.downloader.JarIns
 import io.github.pulsebeat02.emcdependencymanagement.component.relocator.FileRelocator;
 import io.github.pulsebeat02.emcdependencymanagement.component.search.JarSearcher;
 import io.github.pulsebeat02.emcdependencymanagement.injector.UnsafeInjection;
+import io.github.pulsebeat02.emcdependencymanagement.logger.DefaultLoggerConfiguration;
+import io.github.pulsebeat02.emcdependencymanagement.logger.LoggerConfiguration;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -40,14 +42,14 @@ import java.util.stream.Stream;
 /** Main class for handling JAR dependencies. */
 public final class EMCDepManagement {
 
-  private final SimpleLogger logger;
+  private final LoggerConfiguration logger;
   private final Collection<Artifact> artifacts;
   private final Collection<Relocation> relocations;
   private final Collection<Repository> repositories;
   private final Path folder;
 
   EMCDepManagement(
-      final SimpleLogger logger,
+      final LoggerConfiguration logger,
       final Collection<Artifact> artifacts,
       final Collection<Relocation> relocations,
       final Collection<Repository> repositories,
@@ -112,7 +114,7 @@ public final class EMCDepManagement {
     }
   }
 
-  public SimpleLogger getLogger() {
+  public LoggerConfiguration getLogger() {
     return this.logger;
   }
 
@@ -134,7 +136,7 @@ public final class EMCDepManagement {
 
   public static class Builder {
 
-    private SimpleLogger logger;
+    private LoggerConfiguration logger;
     private Collection<Artifact> artifacts;
     private Collection<Relocation> relocations;
     private Collection<Repository> repositories;
@@ -142,23 +144,7 @@ public final class EMCDepManagement {
     private String name;
 
     {
-      this.logger =
-          new SimpleLogger() {
-            @Override
-            public void info(final String line) {
-              System.out.printf("[INFO] %s%n", line);
-            }
-
-            @Override
-            public void warning(final String line) {
-              System.out.printf("[WARN] %s%n", line);
-            }
-
-            @Override
-            public void error(final String line) {
-              System.err.printf("[ERROR] %s%n", line);
-            }
-          };
+      this.logger = new DefaultLoggerConfiguration();
       this.artifacts = new ArrayList<>();
       this.relocations = new ArrayList<>();
       this.repositories = new ArrayList<>();
@@ -258,7 +244,7 @@ public final class EMCDepManagement {
      * @param logger the logger
      * @return the same builder
      */
-    public Builder setLogger(final SimpleLogger logger) {
+    public Builder setLogger(final LoggerConfiguration logger) {
       this.logger = logger;
       return this;
     }

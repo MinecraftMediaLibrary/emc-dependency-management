@@ -20,7 +20,7 @@
  */
 package io.github.pulsebeat02.emcdependencymanagement.component.downloader;
 
-import io.github.pulsebeat02.emcdependencymanagement.SimpleLogger;
+import io.github.pulsebeat02.emcdependencymanagement.logger.LoggerConfiguration;
 import io.github.pulsebeat02.emcdependencymanagement.component.Artifact;
 import io.github.pulsebeat02.emcdependencymanagement.component.Repository;
 import io.github.pulsebeat02.emcdependencymanagement.util.FileUtils;
@@ -42,14 +42,14 @@ import java.util.Set;
 /** Installs the JARs based on the artifacts given. */
 public final class JarInstaller {
 
-  private final SimpleLogger logger;
+  private final LoggerConfiguration logger;
   private final Collection<Artifact> artifacts;
   private final Collection<Repository> repositories;
   private final Set<Path> paths;
   private final Path target;
 
   JarInstaller(
-      final SimpleLogger logger,
+      final LoggerConfiguration logger,
       final Collection<Artifact> artifacts,
       final Collection<Repository> repositories,
       final Path target) {
@@ -72,7 +72,7 @@ public final class JarInstaller {
    * @return a new JarInstaller
    */
   public static JarInstaller ofInstaller(
-      final SimpleLogger logger,
+      final LoggerConfiguration logger,
       final Collection<Artifact> artifacts,
       final Collection<Repository> repositories,
       final Path target) {
