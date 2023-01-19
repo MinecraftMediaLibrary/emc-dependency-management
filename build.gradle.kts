@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("me.lucko:jar-relocator:1.5")
+    implementation("me.lucko:jar-relocator:1.6")
 }
 
 sourceSets {
@@ -78,6 +78,6 @@ subprojects {
     }
 
     task<Wrapper>("wrapper") {
-        gradleVersion = "7.5"
+        gradleVersion = "7.6"
     }
 }
