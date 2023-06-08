@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("me.lucko:jar-relocator:1.6")
+    implementation("me.lucko:jar-relocator:1.7")
 }
 
 sourceSets {
